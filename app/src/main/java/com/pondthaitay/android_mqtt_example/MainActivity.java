@@ -18,11 +18,13 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity implements IMqttActionListener {
 
     private static final String TOPIC = "20scoopsClawMachine";
+    private static final String SERVER_URI = "tcp://broker.hivemq.com:1883";
     private MqttAndroidClient client;
 
     @Override
     protected void onStart() {
         super.onStart();
+        setupMQTT();
     }
 
     @Override
@@ -41,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements IMqttActionListen
         setContentView(R.layout.activity_main);
         ToggleButton toggleButton = (ToggleButton) findViewById(R.id.toggle);
         toggleButton.setOnCheckedChangeListener((buttonView, isChecked) -> sendMessage(isChecked));
-        setupMQTT();
     }
 
     @Override
@@ -58,9 +59,7 @@ public class MainActivity extends AppCompatActivity implements IMqttActionListen
         String clientId = MqttClient.generateClientId();
         MqttConnectOptions options = new MqttConnectOptions();
         options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
-        client = new MqttAndroidClient(this.getApplicationContext(),
-                "tcp://broker.hivemq.com:1883",
-                clientId);
+        client = new MqttAndroidClient(this.getApplicationContext(), SERVER_URI, clientId);
         try {
             IMqttToken token = client.connect(options);
             token.setActionCallback(this);
@@ -70,10 +69,8 @@ public class MainActivity extends AppCompatActivity implements IMqttActionListen
     }
 
     private void sendMessage(boolean isChecked) {
-        Random random = new Random();
         MqttMessage message = new MqttMessage();
-        message.setPayload(isChecked ? String.valueOf(random.nextInt(5) + 1).getBytes() :
-                String.valueOf("0").getBytes());
+        message.setPayload(getActionNumber(isChecked));
         message.setQos(1);
         message.setRetained(true);
         try {
@@ -81,5 +78,11 @@ public class MainActivity extends AppCompatActivity implements IMqttActionListen
         } catch (MqttException e) {
             e.printStackTrace();
         }
+    }
+
+    private byte[] getActionNumber(boolean isChecked) {
+        Random random = new Random();
+        return isChecked ? String.valueOf(random.nextInt(5) + 1).getBytes() :
+                String.valueOf("0").getBytes();
     }
 }
