@@ -18,11 +18,13 @@ public class MainActivity extends AppCompatActivity implements IMqttActionListen
         , View.OnClickListener, View.OnTouchListener {
 
     private static final String TOPIC = "20scoopsClawMachine";
+    private static final String SERVER_URI = "tcp://broker.hivemq.com:1883";
     private MqttAndroidClient client;
 
     @Override
     protected void onStart() {
         super.onStart();
+        setupMQTT();
     }
 
     @Override
@@ -97,9 +99,7 @@ public class MainActivity extends AppCompatActivity implements IMqttActionListen
         String clientId = MqttClient.generateClientId();
         MqttConnectOptions options = new MqttConnectOptions();
         options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
-        client = new MqttAndroidClient(this.getApplicationContext(),
-                "tcp://broker.hivemq.com:1883",
-                clientId);
+        client = new MqttAndroidClient(this.getApplicationContext(), SERVER_URI, clientId);
         try {
             IMqttToken token = client.connect(options);
             token.setActionCallback(this);
