@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Android-MQTT-Example</string>
+    <string name="btn_start">Start</string>
+    <string name="btn_catch">Catch</string>
+    <string name="btn_up">Up</string>
+    <string name="btn_right">Right</string>
+    <string name="btn_left">Left</string>
+    <string name="btn_down">Down</string>
 </resources>
